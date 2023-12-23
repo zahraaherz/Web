@@ -1,10 +1,7 @@
 import {  Badge, Flex, IconButton } from '@chakra-ui/react'
 // import {BiExpand} from 'react-icons/bi'
 import React from 'react'
-import {AspectRatio,Box,
-    Button,
-    HStack,
-    Image,
+import {AspectRatio,Box, Button, HStack, Image,
     Link,
     Skeleton,
     Stack,
@@ -14,10 +11,16 @@ import {AspectRatio,Box,
   import { Rating } from './Rating'
   import { FavouriteButton } from './FavouriteButton'
   import { PriceTag } from './PriceTag'
+  import { removeFromFavorites , addToavorites } from '../redux/actions/productActions'
+  import { useDispatch, useSelector } from 'react-redux';
+
   
   export const ProductCard = ({ product , loading }) => {
     // const { product, rootProps } = props
     // const { name, imageUrl, price, salePrice, rating } = product
+    const dispatch = useDispatch();
+    const { favorites } = useSelector((state) => state.product);
+  
     return (
       <Stack 
         spacing={{
@@ -41,11 +44,13 @@ import {AspectRatio,Box,
             />
           </AspectRatio>
           <FavouriteButton
+            productId={product._id}
             position="absolute"
             top="4"
             right="4"
             aria-label={`Add ${product.name} to your favourites`}
           />
+          
         </Box>
         <Stack>
           <Stack spacing="1">

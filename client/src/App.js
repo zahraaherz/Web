@@ -1,14 +1,21 @@
 
 import * as React from 'react'
 import ProductsScreen from './screens/ProductsScreen';
-// 1. import `ChakraProvider` component
 import { ChakraProvider } from '@chakra-ui/react'
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 function App() {
   // 2. Wrap ChakraProvider at the root of your app
   return (
     <ChakraProvider>
-      <ProductsScreen />
+      <Router>
+        <main>
+          <Routes>
+            <Route path='/' element={<ProductsScreen />} />
+          </Routes>
+        </main>
+      </Router>
+      
     </ChakraProvider>
   )
 }

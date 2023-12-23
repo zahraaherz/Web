@@ -1,34 +1,51 @@
-import { Box, Wrap } from "@chakra-ui/react";
+import { Box, Wrap , Button } from "@chakra-ui/react";
 import ProductCard from "../components/ProductCard";
-import axios from "axios";
 import { useState, useEffect } from "react";
 import { ProductGrid } from '../components/ProductGrid'
 import {useSelector , useDispatch} from 'react-redux'
 import { getProducts } from "../redux/actions/productActions";
+import {ArrowLeftIcon , ArrowRightIcon} from '@chakra-ui/icons';
+
+
 
 const ProductsScreen = () => {
   const dispatch = useDispatch();
-  const {products , pagination , loading , error} = useSelector((state) => state.product);
-  // const [data, setData] = useState([]);
+  const { products, pagination, loading, error, favouriteToggle } = useSelector((state) => state.product);
 
   useEffect(() => {
-   dispatch(getProducts())
+    dispatch(getProducts(1));
   }, [dispatch]);
+
+  const PaginationButton = (page) => {
+    dispatch(getProducts(page));
+  }
 
   return (
     <>
       {products.length > 0 && (
-        <Box maxW="7xl" mx="auto" px={{ base: '4',md: '8',lg: '12', }} py={{ base: '6', md: '8', lg: '12',}} >
-            <ProductGrid>
-                {products.map((product) => (
-                   <ProductCard key={product.id} product={product} loading={loading} />
-                 ))}
-            </ProductGrid>
-         </Box>
+        <Box maxW="7xl" mx="auto" px={{ base: '4', md: '8', lg: '12' }} py={{ base: '6', md: '8', lg: '12' }}>
+          <ProductGrid>
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} loading={loading} />
+            ))}
+          </ProductGrid>
 
-            // {/* <Wrap spacing='30px' justify='center' minHeight='80vh' mx={{base: '12', md: '20', lg: 32}}>
-            // <ProductCard product={data[0]} loading={false} />
-            // </Wrap> */}
+          {!favouriteToggle &&
+            <Wrap spacing='10px' justify='center' p='5'>
+              <Button colorScheme='gray' onClick={() => PaginationButton(1)} >
+                <ArrowLeftIcon />
+              </Button>
+              {Array.from(Array(pagination.totalPages), (e, i) => (
+                <Button key={i} onClick={() => PaginationButton(i + 1)} colorScheme={pagination.currentPage == i +1 ? 'cyan' : 'gray'}>
+                  {i + 1}
+                </Button>
+              ))}
+              <Button colorScheme='gray' onClick={() => PaginationButton(pagination.totalPages)} >
+                <ArrowRightIcon />
+              </Button>
+            </Wrap>
+          }
+        </Box>
       )}
     </>
   );
