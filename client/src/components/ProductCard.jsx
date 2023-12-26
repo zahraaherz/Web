@@ -1,6 +1,6 @@
 import {  Badge, Flex, IconButton } from '@chakra-ui/react'
 // import {BiExpand} from 'react-icons/bi'
-import React from 'react'
+import React , {useState} from 'react'
 import {AspectRatio,Box, Button, HStack, Image,
     Link,
     Skeleton,
@@ -11,12 +11,12 @@ import {AspectRatio,Box, Button, HStack, Image,
   import { Rating } from './Rating'
   import { FavouriteButton } from './FavouriteButton'
   import { PriceTag } from './PriceTag'
-  import { removeFromFavorites , addToavorites } from '../redux/actions/productActions'
   import { useDispatch, useSelector } from 'react-redux';
+  import {Link as ReactLink} from 'react-router-dom';
 
   
   export const ProductCard = ({ product , loading }) => {
-    // const { product, rootProps } = props
+    const [ isShown, setIsShown ] = useState(false)
     // const { name, imageUrl, price, salePrice, rating } = product
     const dispatch = useDispatch();
     const { favorites } = useSelector((state) => state.product);
@@ -27,13 +27,19 @@ import {AspectRatio,Box, Button, HStack, Image,
           base: '4',
           md: '5',
         }}
+        
+        _hover = {{transform:'scale(1.1)' , transitionDuration: '0.5s'}}
         isLoaded = {!loading} 
         // {...rootProps}
+        as={ReactLink}
+        to={`/product/${product._id}`}
         >
         <Box position="relative">
           <AspectRatio ratio={4 / 3}>
             <Image
-            src={product.images[0]}
+              onMouseEnter={() => setIsShown(true)}  
+              onMouseLeave={() => setIsShown(false)}   
+              src={product.images[isShown && product.images.length === 2 ? 1 : 0]}
               alt={product.name}
               draggable="false"
               fallback={<Skeleton />}

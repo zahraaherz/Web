@@ -1,4 +1,4 @@
-import { Box, Wrap , Button } from "@chakra-ui/react";
+import { Box, Wrap , Button, Alert, AlertIcon, AlertTitle, AlertDescription } from "@chakra-ui/react";
 import ProductCard from "../components/ProductCard";
 import { useState, useEffect } from "react";
 import { ProductGrid } from '../components/ProductGrid'
@@ -24,10 +24,20 @@ const ProductsScreen = () => {
     <>
       {products.length > 0 && (
         <Box maxW="7xl" mx="auto" px={{ base: '4', md: '8', lg: '12' }} py={{ base: '6', md: '8', lg: '12' }}>
-          <ProductGrid>
-            {products.map((product) => (
+            <ProductGrid>
+
+          {error? (
+            <Alert status='error'>
+              <AlertIcon/>
+              <AlertTitle>We Are Sorry</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>)
+            :(
+            products.map((product) => (
               <ProductCard key={product.id} product={product} loading={loading} />
-            ))}
+            ))
+          )}
+            
           </ProductGrid>
 
           {!favouriteToggle &&
@@ -36,7 +46,7 @@ const ProductsScreen = () => {
                 <ArrowLeftIcon />
               </Button>
               {Array.from(Array(pagination.totalPages), (e, i) => (
-                <Button key={i} onClick={() => PaginationButton(i + 1)} colorScheme={pagination.currentPage == i +1 ? 'cyan' : 'gray'}>
+                <Button key={i} onClick={() => PaginationButton(i + 1)} colorScheme={pagination.currentPage === i +1 ? 'cyan' : 'gray'}>
                   {i + 1}
                 </Button>
               ))}
