@@ -1,38 +1,65 @@
-import {  Badge, Flex, IconButton } from '@chakra-ui/react'
 // import {BiExpand} from 'react-icons/bi'
 import React , {useState} from 'react'
-import {AspectRatio,Box, Button, HStack, Image,
+import {AspectRatio,Box, Button, HStack, Image,  Badge,
     Link,
     Skeleton,
     Stack,
     Text,
     useColorModeValue,
+    useToast,
+    // Tooltip
   } from '@chakra-ui/react'
   import { Rating } from './Rating'
   import { FavouriteButton } from './FavouriteButton'
   import { PriceTag } from './PriceTag'
-  import { useDispatch, useSelector } from 'react-redux';
+  // import { useDispatch, useSelector } from 'react-redux';
   import {Link as ReactLink} from 'react-router-dom';
+  // import {addCartItem} from '../redux/actions/cartAction';
+  // import { useEffect} from 'react';
 
   
   export const ProductCard = ({ product , loading }) => {
     const [ isShown, setIsShown ] = useState(false)
     // const { name, imageUrl, price, salePrice, rating } = product
-    const dispatch = useDispatch();
-    const { favorites } = useSelector((state) => state.product);
+    // const dispatch = useDispatch();
+    // const { favorites } = useSelector((state) => state.product);
+    // const { cartItems } = useSelector((state) => state.cart); 
+    const toast = useToast();
+    // const {cartPlusDisabled, setCartPlusDisabled} = useState(false);
   
+    // useEffect(() => {
+    //   const item = cartItems.find((cartItem) => cartItem.id === product.id)
+    //   if (item && item.qty === product.stock){
+    //     setCartPlusDisabled(true)
+    //   }
+    // }, [product, cartItems])
+
+    // const addItem = (id) => {
+    //   if (cartItems.some((cartItem) => cartItem.id === id)) {
+    //     const item = cartItems.find((cartItem) => cartItem.id === id);
+    //     dispatch(addCartItem(id, item.qty + 1));
+    //   } else {
+    //     dispatch(addCartItem(id, 1));
+    //   }
+    //   toast({
+    //     description: 'Item has been added.',
+    //     status: 'success',
+    //     isClosable: true,
+    //   });
+    // };
+
     return (
       <Stack 
         spacing={{
           base: '4',
           md: '5',
         }}
-        
+        as={ReactLink}
+        to={`/product/${product._id}`}
         _hover = {{transform:'scale(1.1)' , transitionDuration: '0.5s'}}
         isLoaded = {!loading} 
         // {...rootProps}
-        as={ReactLink}
-        to={`/product/${product._id}`}
+       
         >
         <Box position="relative">
           <AspectRatio ratio={4 / 3}>
@@ -47,6 +74,7 @@ import {AspectRatio,Box, Button, HStack, Image,
                 base: 'md',
                 md: 'xl',
               }}
+             
             />
           </AspectRatio>
           <FavouriteButton
@@ -78,7 +106,7 @@ import {AspectRatio,Box, Button, HStack, Image,
           </HStack>
         </Stack>
         <Stack align="center">
-          <Button colorScheme="blue" width="full">
+          <Button colorScheme="blue" width="full" >
             Add to cart
           </Button>
           <Link

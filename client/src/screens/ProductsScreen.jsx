@@ -1,6 +1,6 @@
 import { Box, Wrap , Button, Alert, AlertIcon, AlertTitle, AlertDescription } from "@chakra-ui/react";
 import ProductCard from "../components/ProductCard";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { ProductGrid } from '../components/ProductGrid'
 import {useSelector , useDispatch} from 'react-redux'
 import { getProducts } from "../redux/actions/productActions";

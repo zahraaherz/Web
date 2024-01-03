@@ -11,13 +11,11 @@ import {
 	HStack,
 	Heading,
 	Image,
-	SimpleGrid,
 	Spinner,
 	Stack,
 	Text,
 	Wrap,
 } from '@chakra-ui/react';
-import { BiCheckShield, BiPackage, BiSupport } from 'react-icons/bi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getProduct } from '../redux/actions/productActions';
@@ -111,7 +109,7 @@ const ProductScreen = () => {
 									<Button variant='outline' isDisabled={product.stock === 0} colorScheme='cyan' onClick={() => {}}>
 										Add to cart
 									</Button>
-									<Stack width='270px'>
+									{/* <Stack width='270px'>
 										<Flex alignItems='center'>
 											<BiPackage size='20px' />
 										</Flex>
@@ -127,7 +125,7 @@ const ProductScreen = () => {
 												We're here for you 24/7
 											</Text>
 										</Flex>
-									</Stack>
+									</Stack> */}
 								</Stack>
 							</Stack>
 							<Flex direction='column' align='center' flex='1' _dark={{ bg: 'gray.900' }}>
@@ -149,7 +147,7 @@ const ProductScreen = () => {
 							<Text fontSize='xl' fontWeight='bold'>
 								Reviews
 							</Text>
-							<SimpleGrid minChildWidth='300px' spacingX='40px' spacingY='20px'>
+							{/* <SimpleGrid minChildWidth='300px' spacingX='40px' spacingY='20px'>
 								{product.reviews.map((review) => (
 									<Box key={review._id}>
 										<Flex spcaing='2px' alignItems='center'>
@@ -168,7 +166,7 @@ const ProductScreen = () => {
 										</Text>
 									</Box>
 								))}
-							</SimpleGrid>
+							</SimpleGrid> */}
 						</Stack>
 					</Box>
 				)
