@@ -6,7 +6,7 @@ import user from './slices/user';
 const reducer = combineReducers({
     product,
     cart, 
-    user
+    user,
 });
 
 export default configureStore({reducer});

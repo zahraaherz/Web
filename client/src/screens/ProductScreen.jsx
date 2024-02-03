@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getProduct } from '../redux/actions/productActions';
 import { useEffect, useState } from 'react';
-import Star from '../components/Stars';
+import Star from '../components/products/Stars';
 
 const ProductScreen = () => {
 	const [amount, setAmount] = useState(1);

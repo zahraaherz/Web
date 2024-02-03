@@ -1,7 +1,7 @@
 import { Box, Wrap , Button, Alert, AlertIcon, AlertTitle, AlertDescription } from "@chakra-ui/react";
-import ProductCard from "../components/ProductCard";
+import ProductCard from "../components/products/ProductCard";
 import { useEffect } from "react";
-import { ProductGrid } from '../components/ProductGrid'
+import { ProductGrid } from '../components/products/ProductGrid'
 import {useSelector , useDispatch} from 'react-redux'
 import { getProducts } from "../redux/actions/productActions";
 import {ArrowLeftIcon , ArrowRightIcon} from '@chakra-ui/icons';
@@ -33,6 +33,7 @@ const ProductsScreen = () => {
               <AlertDescription>{error}</AlertDescription>
             </Alert>)
             :(
+              
             products.map((product) => (
               <ProductCard key={product.id} product={product} loading={loading} />
             ))

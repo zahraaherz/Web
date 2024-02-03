@@ -8,7 +8,7 @@ import {
     useColorModeValue as mode,
   } from '@chakra-ui/react'
   import { FaArrowRight } from 'react-icons/fa'
-  import { formatPrice } from './PriceTag'
+  import { formatPrice } from '../products/PriceTag'
   const OrderSummaryItem = (props) => {
     const { label, value, children } = props
     return (

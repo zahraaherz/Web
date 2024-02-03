@@ -16,28 +16,36 @@ const genToken = (id) => {
 const loginUser = asyncHandler(async (req, res) => {
 	const { email, password } = req.body;
 	const user = await User.findOne({ email });
-
+  
 	if (user && (await user.matchPasswords(password))) {
-		user.firstLogin = false;
-		await user.save();
-		res.json({
-			_id: user._id,
-			name: user.name,
-			email: user.email,
-			googleImage: user.googleImage,
-			goodleId: user.googleId,
-			isAdmin: user.isAdmin,
-			token: genToken(user._id),
-			active: user.active,
-			firstLogin: user.firstLogin,
-			created: user.createdAt,
-		});
+	  user.firstLogin = false;
+	  await user.save();
+  
+	  const token = genToken(user._id);
+  
+	  res.json({
+		_id: user._id,
+		name: user.name,
+		email: user.email,
+		googleImage: user.googleImage,
+		googleId: user.googleId, // Fixed typo here
+		isAdmin: user.isAdmin,
+		token,
+		active: user.active,
+		firstLogin: user.firstLogin,
+		created: user.createdAt,
+	  });
+  
+	  // Log successful login
+	  console.log(`User ${user.email} logged in successfully.`);
 	} else {
-		res.status(401).send('Invalid Email or Password.');
-		throw new Error('User not found.');
+	  // Log failed login attempt
+	  console.log(`Failed login attempt for user ${email}.`);
+  
+	  res.status(401).json({ message: 'Invalid email or password.' });
 	}
-});
-
+  });
+  
 // register
 const registerUser = asyncHandler(async (req, res) => {
 	const { name, email, password } = req.body;

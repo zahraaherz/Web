@@ -1,45 +1,34 @@
 import axios from 'axios';
 import { setError, setLoading, setShippingCosts, cartItemAdd, cartItemRemoval, clearCart } from '../slices/cart';
 
-export const addCartItem = (id, qty) => async (dispatch) => {
-	dispatch(setLoading(true));
+'// Async action to add an item to the cart
+export const addItemToCart = (item) => async (dispatch) => {
 	try {
-		const { data } = await axios.get(`/api/products/${id}`);
-		const itemToAdd = {
-			id: data._id,
-			name: data.name,
-			subtitle: data.subtitle,
-			image: data.images[0],
-			price: data.price,
-			stock: data.stock,
-			brand: data.brand,
-			qty,
-			stripeId: data.stripeId,
-		};
-
-		dispatch(cartItemAdd(itemToAdd));
+	  dispatch(setLoading());
+	  // Make API call to add item to the cart
+	  const response = await axios.post('/api/cart/add', item);
+	  dispatch(cartItemAdd(response.data)); // Assuming the response is the updated cart
 	} catch (error) {
-		dispatch(
-			setError(
-				error.response && error.response.data.message
-					? error.response.data.message
-					: error.message
-					? error.message
-					: 'An expected error has occured. Please try again later.'
-			)
-		);
+	  dispatch(setError(error.message));
 	}
-};
+  };
 
-export const removeCartItem = (id) => async (dispatch) => {
-	dispatch(setLoading(true));
-	dispatch(cartItemRemoval(id));
-};
+// Async action to remove an item from the cart
+export const removeItemFromCart = (itemId) => async (dispatch) => {
+	try {
+	  dispatch(setLoading());
+	  // Make API call to remove item from the cart
+	  await axios.delete(`/api/cart/remove/${itemId}`);
+	  dispatch(cartItemRemoval(itemId));
+	} catch (error) {
+	  dispatch(setError(error.message));
+	}
+  };
 
 export const setShipping = (value) => async (dispatch) => {
 	dispatch(setShippingCosts(value));
 };
 
 export const resetCart = () => (dispatch) => {
-	dispatch(clearCart);
-};
+	dispatch(clearCart()); // Correctly dispatch the clearCart action
+  };

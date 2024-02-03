@@ -16,9 +16,11 @@ export const userSlice = createSlice({
 			state.loading = true;
 		},
 		userLogin: (state, { payload }) => {
+			console.log('Before update:', state.userInfo);
 			state.userInfo = payload;
 			state.error = null;
 			state.loading = false;
+			console.log('After update:', state.userInfo);
 		},
 		userLogout: (state) => {
 			state.loading = false;

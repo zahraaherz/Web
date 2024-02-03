@@ -8,7 +8,7 @@ import {
     useColorModeValue as mode,
   } from '@chakra-ui/react'
   // import { CartItem } from '../components/CartItem'
-  import { CartOrderSummary } from '../components/CartOrderSummary'
+  import { CartOrderSummary } from '../components/cart/CartOrderSummary'
 //   import { cartData } from './_data'
   
 

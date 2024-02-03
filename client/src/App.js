@@ -9,7 +9,9 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import CartScreen from './screens/CartScreen'
 import LoginScreen from './screens/LoginScreen'
-import PasswordForgetForm from './components/PasswordForgetForm';
+import PasswordForgetForm from './components/authPages/PasswordForgetForm';
+import EmailVerificationScreen from './screens/EmailVerificationScreen';
+import PasswordResetScreen from './screens/PasswordResetScreen';
 
 function App() {
   // 2. Wrap ChakraProvider at the root of your app
@@ -25,7 +27,9 @@ function App() {
             <Route path='/cart' element={<CartScreen />} />
             <Route path='/login' element={<LoginScreen />} />
             <Route path='/PasswordForgetForm' element={<PasswordForgetForm />} />
-            {/* <Route path='/login' element={<LoginScreen />} /> */}
+            <Route path='/login' element={<LoginScreen />} />
+						<Route path='/email-verify/:token' element={<EmailVerificationScreen />} />
+						<Route path='/password-reset/:token' element={<PasswordResetScreen />} />
 
           </Routes>
         </main>

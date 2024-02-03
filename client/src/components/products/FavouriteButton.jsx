@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { LightMode, IconButton, Icon } from '@chakra-ui/react';
 import { FiHeart } from 'react-icons/fi';
-import { addToFavorites, removeFromFavorites } from '../redux/actions/productActions';
+import { addToFavorites, removeFromFavorites } from '../../redux/actions/productActions';
 
 export const FavouriteButton = ({ productId }) => {
   const dispatch = useDispatch();
