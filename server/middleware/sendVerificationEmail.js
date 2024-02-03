@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 
-//fhhl ngbh pwhi gmxc
-//ZahraaHerz1999@Gmail.com
+//tqlh kkuy kgau pglw
+//maaleena7@gmail.com
 
 
 export  const sendVerificationEmail = (token, email, name, id)=>{
@@ -9,13 +9,13 @@ export  const sendVerificationEmail = (token, email, name, id)=>{
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: 'ZahraaHerz1999@Gmail.com', // replace with your Gmail email address
-          pass: 'fhhl ngbh pwhi gmxc'   // replace with your Gmail email password
+          user: 'maaleena7@gmail.com', // replace with your Gmail email address
+          pass: 'tqlh kkuy kgau pglw'   // replace with your Gmail email password
         }
       });
 
       const mailOptions = {
-        from: 'ZahraaHerz1999@Gmail.com',  // replace with your Gmail email address
+        from: 'maaleena7@gmail.com',  // replace with your Gmail email address
         to: email,
         subject: 'Email Verification',
         html: `

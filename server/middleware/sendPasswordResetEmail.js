@@ -1,23 +1,19 @@
 import nodemailer from 'nodemailer';
 
-//fhhl ngbh pwhi gmxc
-//ZahraaHerz1999@Gmail.com
-
-
 // Async function to send a password reset email
 export const sendPasswordResetEmail = (token, email, name) => {
   // Create a nodemailer transporter
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'ZahraaHerz1999@Gmail.com', // replace with your Gmail email address
-      pass: 'fhhl ngbh pwhi gmxcs'   // replace with your Gmail email password
+      user: 'maaleena7@gmail.com', // replace with your Gmail email address
+      pass: 'tqlh kkuy kgau pglw'   // replace with your Gmail email password
     }
   });
 
   // Compose the email
   const mailOptions = {
-    from: 'your_email@gmail.com',  // replace with your Gmail email address
+    from: 'maaleena7@gmail.com',  // replace with your Gmail email address
     to: email,
     subject: 'Password Reset',
     html: `
@@ -28,12 +24,11 @@ export const sendPasswordResetEmail = (token, email, name) => {
     `
   };
 
-  transporter.sendMail(mailOptions) , function(error, info) {
-    if(error){
-        console.error('Error sending email:', error);
-
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.error('Error sending email:', error);
     } else {
-        console.log('Email sent:', info.response);
+      console.log('Email sent:', info.response);
     }
-};
+  });
 };
