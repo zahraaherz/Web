@@ -20,6 +20,20 @@ app.use('/api/cart', cartRoutes);
 
 const port = 5000;
 
+// app.get('/api/config/google', (req, res) => res.send(process.env.GOOGLE_CLIENT_ID));
+app.get('/api/config/google', (req, res) => {
+	try {
+	  if (!process.env.GOOGLE_CLIENT_ID) {
+		throw new Error('Google Client ID not found.');
+	  }
+  
+	  res.send(process.env.GOOGLE_CLIENT_ID);
+	} catch (error) {
+	  console.error('Error retrieving Google Client ID:', error.message);
+	  res.status(500).send('Internal Server Error');
+	}
+  });
+  
 app.get('/', (req, res) => {
 	res.send('Api is running...');
 });
