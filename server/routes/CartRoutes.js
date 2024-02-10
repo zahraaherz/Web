@@ -3,10 +3,11 @@
 import express from 'express';
 import Cart from '../models/Cart.js'; 
 import Product from '../models/Product.js'; 
+import { admin, protectRoute } from '../middleware/authMiddleware.js';
 
 const cartRoutes = express.Router();
 
-const getCart = async (req, res) => {
+const getCartItems = async (req, res) => {
   
   try {
     const userId = req.params.userId;
@@ -25,175 +26,135 @@ const getCart = async (req, res) => {
   }
 };
 
-const addToCart = async (userId, productId, quantity) => {
+const addItemToCart = async (req, res) => {
+  const { userId, productId, quantity } = req.body; // Use "userId" from the request body
+
   try {
-    // Check if the product exists
-    const product = await Product.findById(productId);
-    if (!product) {
-      throw new Error('Product not found');
-    }
 
     // Check if the quantity is greater than zero
-    // if (!quantity || quantity <= 0) {
-    //   throw new Error('Invalid quantity. Please provide a quantity greater than zero.');
-    // }
+    if (!quantity || quantity <= 0) {
+        throw new Error('Invalid quantity. Please provide a quantity greater than zero.');
+     }
 
-    // Find the user's cart
-    let userCart = await Cart.findOne({ user: userId });
+    // Retrieve the product details including the stock
+    const product = await Product.findById(productId);
 
-    // // If user's cart doesn't exist, create a new one
-    // if (!userCart) {
-    //   userCart = new Cart({ user: userId, items: [] });
-    // }
-
-    // // Check if adding this item would exceed the cart limit (e.g., 100 items)
-    // if (userCart.items.length >= 100) {
-    //   throw new Error('Cart limit exceeded. You cannot add more items to the cart.');
-    // }
-
-    // Check if the product is already in the cart, update quantity if yes, add if no
-    const existingItemIndex = userCart.items.findIndex(item => item.product.equals(productId));
-
-    if (existingItemIndex !== -1) {
-      // Product already exists in the cart
-      const newQuantity = userCart.items[existingItemIndex].quantity + quantity;
-
-      // // Check if the new quantity exceeds the available stock
-      // if (newQuantity > product.stock) {
-      //   throw new Error('Adding this item would exceed the available stock.');
-      // }
-
-      userCart.items[existingItemIndex].quantity = newQuantity;
-    // } else {
-    //   // Product does not exist in the cart
-    //   // Check if the quantity exceeds the available stock
-    //   if (quantity > product.stock) {
-    //     throw new Error('Adding this item would exceed the available stock.');
-    //   }
-
-    //   userCart.items.push({ product: productId, quantity });
+    if (!product) {
+      throw new Error('Product not found.');
+    }
     
-  }
+    let cart = await Cart.findOne({ user: userId });
 
-    // Save the updated or new cart
-    await userCart.save();
-
-    return userCart;
-  } catch (error) {
-    console.error('Error adding item to cart:', error);
-    throw error;
-  }
-};
-
-
-const addToShoppingCart = async (currentCart, cartItem) => {
-  try {
-    // Find the existing cart using the currentCart ID
-    const existingCart = await Cart.findById(currentCart);
-
-    if (!existingCart) {
-      // Handle the case where the cart is not found
-      throw new Error('Cart not found');
+    if (!cart) {
+      // If the user doesn't have a cart yet, create one
+      cart = await Cart.create({ user: userId, items: [] });
     }
 
-    // Check if the item already exists in the cart
-    const existingItemIndex = existingCart.items.findIndex(item =>
-      item.product.equals(cartItem.product)
-    );
+    // Check if adding this item would exceed the cart limit (e.g., 100 items)
+    if (cart.items.length + 1 > 100) {
+      throw new Error('Cart limit exceeded. You cannot add more items to the cart.');
+    }
+     
+    // Check if the requested quantity exceeds the available stock
+    if (quantity > product.stock) {
+      throw new Error('Insufficient stock. The requested quantity exceeds available stock.');
+    }
+
+    const existingItemIndex = cart.items.findIndex(item => item.product.equals(productId));
 
     if (existingItemIndex !== -1) {
-      // If the item already exists, update the quantity
-      existingCart.items[existingItemIndex].quantity += cartItem.quantity;
+      // If the product is already in the cart, update the quantity
+      cart.items[existingItemIndex].quantity += quantity;
+
+      // Check if the new quantity exceeds the available stock
+      if (cart.items[existingItemIndex].quantity > product.stock) {
+        throw new Error('New quantity exceeds available stock.');
+      }
     } else {
-      // If the item does not exist, add it to the cart
-      existingCart.items.push(cartItem);
+      // If the product is not in the cart, add a new item
+      cart.items.push({ product: productId, quantity });
+
+      // Check if the new quantity exceeds the available stock
+      if (quantity > product.stock) {
+        throw new Error('New quantity exceeds available stock.');
+      }
     }
 
-    // Save the updated cart
-    const updatedCart = await existingCart.save();
-
-    return updatedCart;
+    await cart.save();
+    res.json(cart.items);
   } catch (error) {
-    // Handle errors appropriately
-    console.error('Error updating the shopping cart:', error.message);
-    throw error; // Propagate the error for further handling if needed
+    console.error(error); // Log the error for debugging purposes
+    res.status(500).json({ message: 'Error adding item to the cart.' });
   }
 };
 
-// // Example usage:
-// // Replace 'YOUR_USER_ID', 'PRODUCT_ID_TO_ADD', and 2 with actual values
-// const updatedCart = await addToCart('YOUR_USER_ID', 'PRODUCT_ID_TO_ADD', 2);
-// console.log(updatedCart);
+
+const updateCartItem = async (req, res) => {
+  const { userId, productId } = req.params; // Use "userId" and "productId" from URL parameters
+  const { quantity } = req.body; // Use "quantity" from the request body
+
+  try {
+    const cart = await Cart.findOne({ user: userId });
+
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found.' });
+    }
+
+    const existingItem = cart.items.find(item => item.product.equals(productId));
+
+    if (!existingItem) {
+      return res.status(404).json({ message: 'Item not found in the cart.' });
+    }
+
+    // Retrieve the product details including the stock
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found.' });
+    }
+
+    // Check if the updated quantity exceeds the available stock or is less than zero
+    if (quantity > product.stock) {
+      return res.status(400).json({ message: 'Updated quantity exceeds available stock.' });
+    }
+
+    if (quantity < 1) {
+      return res.status(400).json({ message: 'Updated quantity cannot be less than one.' });
+    }
+
+    // Update the quantity and save the cart
+    existingItem.quantity = quantity;
+    await cart.save();
+    
+    res.json(cart.items);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error updating cart item.' });
+  }
+};
 
 
-// const removeFromCart = async (req, res) => {
-//   try {
-//     const { userId, productId } = req.params;
+ const removeItemFromCart = async (req, res) => {
+  const { userId, productId } = req.params; // Use "userId" and "productId" from URL parameters
 
-//     // Check if the user has a cart
-//     const userCart = await Cart.findOne({ user: userId });
-//     if (!userCart) {
-//       return res.status(404).json({ error: 'Cart not found' });
-//     }
+  try {
+    const cart = await Cart.findOne({ user: userId });
 
-//     // Find the index of the item in the cart
-//     const itemIndex = userCart.items.findIndex(item => item.product.equals(productId));
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found.' });
+    }
 
-//     if (itemIndex !== -1) {
-//       // Remove the item from the cart
-//       userCart.items.splice(itemIndex, 1);
-//       await userCart.save();
-//       res.json(userCart);
-//     } else {
-//       res.status(404).json({ error: 'Item not found in the cart' });
-//     }
-//   } catch (error) {
-//     console.error('Error removing item from cart:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// };
+    cart.items = cart.items.filter(item => !item.product.equals(productId));
+    await cart.save();
+    res.json(cart.items);
+  } catch (error) {
+    res.status(500).json({ message: 'Error removing item from the cart.' });
+  }
+};
 
-
-// const reduceOneItemFromCart = async (req, res) => {
-//   try {
-//     const { userId, productId } = req.params;
-
-//     // Find the user's cart
-//     const userCart = await Cart.findOne({ user: userId });
-//     if (!userCart) {
-//       return res.status(404).json({ error: 'Cart not found' });
-//     }
-
-//     // Find the index of the item in the cart
-//     const itemIndex = userCart.items.findIndex(item => item.product.equals(productId));
-
-//     // Check if the item is in the cart
-//     if (itemIndex !== -1) {
-//       // Reduce the quantity of the item by one
-//       if (userCart.items[itemIndex].quantity > 1) {
-//         userCart.items[itemIndex].quantity -= 1;
-//       } else {
-//         // If the quantity is 1, remove the item from the cart
-//         userCart.items.splice(itemIndex, 1);
-//       }
-
-//       // Save the updated cart
-//       await userCart.save();
-//       res.json(userCart);
-//     } else {
-//       res.status(404).json({ error: 'Item not found in the cart' });
-//     }
-//   } catch (error) {
-//     console.error('Error reducing one item from cart:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// };
-
-
-
-cartRoutes.route('/:userId').get(getCart);
-cartRoutes.route('/add').post(addToShoppingCart);
-// cartRoutes.route('/remove/:userId/:productId').delete(removeFromCart);
-// cartRoutes.route('/reduce/:userId/:productId').delete(reduceOneItemFromCart);
+cartRoutes.get('/:userId', getCartItems);
+cartRoutes.post('/add', addItemToCart);
+cartRoutes.put('/update/:userId/:productId', updateCartItem);
+cartRoutes.delete('/remove/:userId/:productId', removeItemFromCart);
 
 export default cartRoutes;
