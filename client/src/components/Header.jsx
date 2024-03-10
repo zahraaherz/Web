@@ -35,7 +35,7 @@ import { toggleFavorites } from '../redux/actions/productActions';
 import { HamburgerIcon, CloseIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { TbShoppingCart } from 'react-icons/tb';
 import { logout } from '../redux/actions/userActions';
-import { MdOutlineAdminPanelSettings } from 'react-icons/md';
+// import { MdOutlineAdminPanelSettings } from 'react-icons/md';
 import { FcGoogle } from 'react-icons/fc';
 import { googleLogout } from '@react-oauth/google';
 
@@ -51,7 +51,7 @@ const Header = () => {
 	const dispatch = useDispatch();
 	const toast = useToast();
 	const { favoritesToggled } = useSelector((state) => state.product);
-	const { cartItems } = useSelector((state) => state.cart);
+	// const { cartItems } = useSelector((state) => state.cart);
 	const { userInfo } = useSelector((state) => state.user);
 	const [showBanner, setShowBanner] = useState(userInfo ? !userInfo.active : false);
 
@@ -90,11 +90,11 @@ const Header = () => {
 							to='/cart'
 							variant='ghost'
 						/>
-						{cartItems.length > 0 && (
+						{/* {cartItems.length > 0 && (
 							<Text fontWeight='bold' fontStyle='italic' position='absolute' ml='74px' mt='-6' fontSize='sm'>
 								{cartItems.length}
 							</Text>
-						)}
+						)} */}
 					</Flex>
 					<HStack spacing='8' alignItems='center'>
 						<Box alignItems='center' display='flex' as={ReactLink} to='/'>
@@ -110,11 +110,11 @@ const Header = () => {
 							))}
 							<Box>
 								<IconButton icon={<TbShoppingCart size='20px' />} as={ReactLink} to='/cart' variant='ghost' />
-								{cartItems.length > 0 && (
+								{/* {cartItems.length > 0 && (
 									<Text fontWeight='bold' fontStyle='italic' position='absolute' ml='26px' mt='-6' fontSize='sm'>
 										{cartItems.length}
 									</Text>
-								)}
+								)} */}
 							</Box>
 
 							<ColorModeToggle />

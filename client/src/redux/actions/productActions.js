@@ -69,6 +69,25 @@ export const getProduct = (id) => async (dispatch) => {
 	try {
 		const { data } = await axios.get(`/api/products/${id}`);
 		dispatch(setProduct(data));
+		dispatch(setProducts(data));
+	} catch (error) {
+		dispatch(
+			setError(
+				error.response && error.response.data.message
+					? error.response.data.message
+					: error.message
+					? error.message
+					: 'An expected error has occured. Please try again later.'
+			)
+		);
+	}
+};
+
+export const getProductsByIds = (ids) => async (dispatch) => {
+	dispatch(setLoading(true));
+	try {
+		const { data } = await axios.get(`/api/products/${ids.join(',')}`);
+		dispatch(setProducts(data));
 	} catch (error) {
 		dispatch(
 			setError(

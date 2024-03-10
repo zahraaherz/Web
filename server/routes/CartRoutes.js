@@ -40,9 +40,12 @@ const addItemToCart = async (req, res) => {
     const product = await Product.findById(productId);
 
     if (!product) {
+      console.error(`Product not found for productId: ${productId}`);
       throw new Error('Product not found.');
     }
     
+    console.log('Product details:', product);
+
     let cart = await Cart.findOne({ user: userId });
 
     if (!cart) {

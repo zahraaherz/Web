@@ -1,34 +1,136 @@
 import axios from 'axios';
-import { setError, setLoading, setShippingCosts, cartItemAdd, cartItemRemoval, clearCart } from '../slices/cart';
+import {
+  setLoading as setCartLoading,
+  setError as setCartError,
+  addToCart as addToCartAction,
+  removeFromCart as removeFromCartAction,
+  updateCartItem as updateCartItemAction,
+  clearCart as clearCartAction,
+  setCart
+} from '../slices/cart';
 
-'// Async action to add an item to the cart
-export const addItemToCart = (item) => async (dispatch) => {
+
+
+export const getCart = (userInfo) => async (dispatch) => {
+
+	dispatch(setCartLoading(true));
 	try {
-	  dispatch(setLoading());
-	  // Make API call to add item to the cart
-	  const response = await axios.post('/api/cart/add', item);
-	  dispatch(cartItemAdd(response.data)); // Assuming the response is the updated cart
+		const { data } = await axios.get(`/api/cart/${userInfo}`);
+		dispatch(setCart(data));
 	} catch (error) {
-	  dispatch(setError(error.message));
+		dispatch(
+			setCartError(
+				error.response && error.response.data.message
+					? error.response.data.message
+					: error.message
+					? error.message
+					: 'An expected error has occured. Please try again later.'
+			)
+		);
 	}
   };
 
-// Async action to remove an item from the cart
-export const removeItemFromCart = (itemId) => async (dispatch) => {
+export const addToCart = (userId, productId, quantity) => async (dispatch, getState) => {
+	dispatch(setCartLoading());
+  
 	try {
-	  dispatch(setLoading());
-	  // Make API call to remove item from the cart
-	  await axios.delete(`/api/cart/remove/${itemId}`);
-	  dispatch(cartItemRemoval(itemId));
+	  const { userInfo } = getState().user;
+	  console.log('User Info:', userInfo); // Check if userInfo is available
+  
+	  const config = {
+		headers: { Authorization: `Bearer ${userInfo.token}`, 'Content-Type': 'application/json' },
+	  };
+  
+	  console.log('Making API request to add to cart');
+	  const response = await axios.post(`http://localhost:5000/api/cart/add`, { userId, productId, quantity });
+	  console.log('API Response:', response.data); // Log the response data
+  
+	  // Assuming addToCartAction takes a cart data object as payload
+	  dispatch(addToCartAction(response.data));
 	} catch (error) {
-	  dispatch(setError(error.message));
+	  console.error('Error in addToCart action:', error);
+	  // Handle errors as needed
+	}
+  };
+  
+  
+
+// Action to remove an item from the cart
+export const removeFromCart = (userId, productId) => async (dispatch) => {
+	dispatch(setCartLoading());
+  
+	try {
+	  const response = await axios.delete(`/api/cart/remove/${userId}/${productId}`);
+  
+	  // Assuming removeFromCartAction takes an updated cart data object as payload
+	  dispatch(removeFromCartAction(response.data));
+	} catch (error) {
+	  // Handle specific error cases if needed
+	  if (error.response) {
+		// The request was made, but the server responded with a status code outside the range of 2xx
+		dispatch(setCartError(error.response.data.message || 'Error removing item from the cart.'));
+	  } else if (error.request) {
+		// The request was made, but no response was received
+		dispatch(setCartError('No response received from the server.'));
+	  } else {
+		// Something happened in setting up the request that triggered an Error
+		dispatch(setCartError('An unexpected error occurred.'));
+	  }
 	}
   };
 
-export const setShipping = (value) => async (dispatch) => {
-	dispatch(setShippingCosts(value));
+// Action to update the quantity of an item in the cart
+export const updateCartItem = (userId, productId, quantity) => async (dispatch) => {
+  dispatch(setCartLoading());
+
+  try {
+    const response = await axios.put(`/api/cart/update/${userId}/${productId}`, {
+      quantity,
+    });
+
+    // Assuming updateCartItemAction takes an updated cart data object as payload
+    dispatch(updateCartItemAction(response.data));
+  } catch (error) {
+    // Handle specific error cases if needed
+    if (error.response) {
+      // The request was made, but the server responded with a status code outside the range of 2xx
+      dispatch(setCartError(error.response.data.message || 'Error updating cart item.'));
+    } else if (error.request) {
+      // The request was made, but no response was received
+      dispatch(setCartError('No response received from the server.'));
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      dispatch(setCartError('An unexpected error occurred.'));
+    }
+  }
+}
+
+// Action to clear the cart
+export const clearCart = (userId) => async (dispatch) => {
+	dispatch(setCartLoading());
+  
+	try {
+	  await axios.delete(`/api/cart/clear/${userId}`);
+  
+	  // Assuming clearCartAction doesn't require a payload
+	  dispatch(clearCartAction());
+	} catch (error) {
+	  // Handle specific error cases if needed
+	  if (error.response) {
+		// The request was made, but the server responded with a status code outside the range of 2xx
+		dispatch(setCartError(error.response.data.message || 'Error clearing the cart.'));
+	  } else if (error.request) {
+		// The request was made, but no response was received
+		dispatch(setCartError('No response received from the server.'));
+	  } else {
+		// Something happened in setting up the request that triggered an Error
+		dispatch(setCartError('An unexpected error occurred.'));
+	  }
+	}
+  };
+
+// Action to handle cart-related errors
+export const handleCartError = (dispatch, errorMessage) => {
+  dispatch(setCartError(errorMessage));
 };
 
-export const resetCart = () => (dispatch) => {
-	dispatch(clearCart()); // Correctly dispatch the clearCart action
-  };

@@ -96,6 +96,23 @@ const deleteProduct = asyncHandler(async (req, res) => {
 	}
 });
 
+const getProductsByIds = async (req, res) => {
+	const productIds = req.params.ids.split(','); // Assuming IDs are provided as a comma-separated list
+  
+	try {
+	  const products = await Product.find({ _id: { $in: productIds } });
+  
+	  if (!products || products.length === 0) {
+		return res.status(404).json({ message: 'Products not found' });
+	  }
+  
+	  res.json({ products });
+	} catch (error) {
+	  console.error(error);
+	  res.status(500).json({ message: 'Internal Server Error' });
+	}
+  };
+  
 
 productRoutes.route('/:page/:perPage').get(getProducts);
 productRoutes.route('/').get(getProducts);
@@ -103,5 +120,6 @@ productRoutes.route('/:id').get(getProduct);
 productRoutes.route('/:id').delete(protectRoute, admin, deleteProduct);
 productRoutes.route('/').put(protectRoute, admin, updateProduct);
 productRoutes.route('/').post(protectRoute, admin, createNewProduct);
+productRoutes.route('/:ids', getProductsByIds);
 
 export default productRoutes;
