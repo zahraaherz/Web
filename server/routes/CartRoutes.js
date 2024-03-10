@@ -31,10 +31,10 @@ const addItemToCart = async (req, res) => {
 
   try {
 
-    // Check if the quantity is greater than zero
-    if (!quantity || quantity <= 0) {
-        throw new Error('Invalid quantity. Please provide a quantity greater than zero.');
-     }
+    // // Check if the quantity is greater than zero
+    // if (!quantity || quantity <= 0) {
+    //     throw new Error('Invalid quantity. Please provide a quantity greater than zero.');
+    //  }
 
     // Retrieve the product details including the stock
     const product = await Product.findById(productId);

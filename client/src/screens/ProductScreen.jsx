@@ -42,13 +42,11 @@ const ProductScreen = () => {
 			setAmount(amount - 1);
 		}
 	};
-
-
 	const handleAddToCart = () => {
-		console.log('Adding to cart:', userInfo._id, id, amount);
+		console.log('Adding to cart:', userInfo._id  , id , amount );
 
 		try {
-			dispatch(addToCart(userInfo.id, id, amount));
+			dispatch(addToCart(userInfo._id, id, amount));
 		  } catch (error) {
 			console.error('Error adding to cart:', error);
 		  }

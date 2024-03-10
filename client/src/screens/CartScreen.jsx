@@ -23,7 +23,7 @@ const CartScreen = () => {
 
   useEffect(() => {
     if (userInfo && userInfo.userInfo) {
-      dispatch(getCart(userInfo.userInfo._id));
+      dispatch(getCart(userInfo._id));
     }
   }, [dispatch, userInfo]);
 

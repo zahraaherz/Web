@@ -30,23 +30,35 @@ export const getCart = (userInfo) => async (dispatch) => {
 	}
   };
 
-export const addToCart = (userId, productId, quantity) => async (dispatch, getState) => {
+  export const addToCart = (userId, productId, quantity) => async (dispatch, getState) => {
 	dispatch(setCartLoading());
   
 	try {
 	  const { userInfo } = getState().user;
-	  console.log('User Info:', userInfo); // Check if userInfo is available
   
-	  const config = {
-		headers: { Authorization: `Bearer ${userInfo.token}`, 'Content-Type': 'application/json' },
-	  };
+	  if (userInfo) {
+		const config = {
+		  headers: { Authorization: `Bearer ${userInfo.token}`, 'Content-Type': 'application/json' },
+		};
   
-	  console.log('Making API request to add to cart');
-	  const response = await axios.post(`http://localhost:5000/api/cart/add`, { userId, productId, quantity });
-	  console.log('API Response:', response.data); // Log the response data
+		console.log('Making API request to add to cart');
+
+		const response = await axios.post(`/api/cart/add`, { userId, productId, quantity }, config);
+		// Log the response data
+		console.log('API Response:', response.data);
   
-	  // Assuming addToCartAction takes a cart data object as payload
-	  dispatch(addToCartAction(response.data));
+		// Assuming addToCartAction takes a cart data object as payload
+		dispatch(addToCart(response.data));
+	  } else {
+		// Save data to local storage if userInfo is not available
+		const localCartData = JSON.parse(localStorage.getItem('localCart')) || [];
+		const newCartItem = { userId, productId, quantity };
+		localCartData.push(newCartItem);
+		localStorage.setItem('localCart', JSON.stringify(localCartData));
+  
+		// You may want to dispatch an action indicating that the item was added to local storage
+		// dispatch(addToLocalStorageAction(newCartItem));
+	  }
 	} catch (error) {
 	  console.error('Error in addToCart action:', error);
 	  // Handle errors as needed

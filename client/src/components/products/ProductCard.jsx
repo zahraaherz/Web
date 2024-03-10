@@ -42,75 +42,52 @@ const ProductCard = ({ product, loading, rootProps }) => {
   // }, [userCart]);
 
   // Function to find matching items based on product ID
-const findMatchingItem = (items, productId) => {
-  return items.filter(item => item.product._id === productId);
-};
+// const findMatchingItem = (items, productId) => {
+//   return items.filter(item => item.product._id === productId);
+// };
 
   const handleAddToCart = async () => {
-    try {
-      // Check if the user is authenticated
-      if (!userInfo || !userInfo.userInfo) {
-        console.error('Error: User not authenticated');
-        return;
-      }
-  
-      // Check if the product is in stock
-      if (product.stock === 0) {
-        setShowAlert(true);
-        setAlertMessage('Sorry, this item is out of stock.');
-        setAlertTimeout();
-        return;
-      }
-  
-      const quantityToAdd = 1;
-  
-      // Check if userCart and userCart.items are defined
-      if (!userCart || !userCart.items) {
-        console.error('Error: Invalid user cart structure');
-        return;
-      }
-  
-      // console.log('User Cart before:', userCart.items);
-      // console.log('product._id', product._id);
-    //   if (userCart || userCart.items) {
+    console.error('Error:' , userInfo );
 
-    //   const cartItem = userCart.items.find(item => item.product._id === product._id);
-    //   console.log('Cart Item:', cartItem);
-    //   return;
+    // try {
+    //   // Check if the user is authenticated
+    //   if (!userInfo || !userInfo.userInfo) {
+    //     console.error('Error: User not authenticated');
+    //     return;
+    //   }
+  
+    //   // Check if the product is in stock
+    //   if (product.stock === 0) {
+    //     setShowAlert(true);
+    //     setAlertMessage('Sorry, this item is out of stock.');
+    //     setAlertTimeout();
+    //     return;
+    //   }
+  
+    //   const quantityToAdd = 1;
+  
+    //   // Check if userCart and userCart.items are defined
+    //   if (!userCart || !userCart.items) {
+    //     console.error('Error: Invalid user cart structure');
+    //     return;
+    //   }
 
-    // }
+    //   // Continue with the addToCart action
+    //   await dispatch(addToCart(userInfo._id, product._id, quantityToAdd));
+    //   setShowAlert(true);
+    //   setAlertMessage('Item added to cart successfully!');
+    //   setAlertTimeout();
+    // } catch (error) {
+    //   console.error('Error adding to cart:', error);
   
-      // const currentQuantityInCart = cartItem ? cartItem.quantity : 0;
-      // console.log('currentQuantityInCart', currentQuantityInCart);
-  
-      // // Check if adding to the cart exceeds the available stock
-      // if (quantityToAdd + currentQuantityInCart > product.stock) {
-      //   setShowAlert(true);
-      //   setAlertMessage(`Only ${product.stock - currentQuantityInCart} items available in stock.`);
-      //   setAlertTimeout();
-      //   return;
-      // }
-  
-      // Add loading state here if needed
-  
-      // Continue with the addToCart action
-      await dispatch(addToCart(userInfo.userInfo._id, product._id, quantityToAdd));
-      setShowAlert(true);
-      setAlertMessage('Item added to cart successfully!');
-      setAlertTimeout();
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-  
-      // Provide more detailed error information during development
-      const errorMessage = error?.response?.data?.message || 'Error adding item to the cart. Please try again.';
+    //   // Provide more detailed error information during development
+    //   const errorMessage = error?.response?.data?.message || 'Error adding item to the cart. Please try again.';
       
-      setShowAlert(true);
-      setAlertMessage(errorMessage);
-      setAlertTimeout();
-    }
+    //   setShowAlert(true);
+    //   setAlertMessage(errorMessage);
+    //   setAlertTimeout();
+    // }
   };
-  
-
   
   const setAlertTimeout = () => {
     // Set a timeout to hide the alert after 20 seconds
