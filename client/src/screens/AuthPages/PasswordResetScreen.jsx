@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, FormControl, FormLabel, Input, Text, useToast } from '@chakra-ui/react';
-import { resetPassword } from '../redux/actions/userActions';
+import { resetPassword } from '../../redux/actions/userActions';
 
 const ResetPasswordForm = ({ token }) => {
   const dispatch = useDispatch();

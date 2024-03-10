@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Alert, AlertIcon, Box, Button, Container, FormControl, FormLabel, Input, Checkbox, Stack, Text , InputGroup, InputRightElement} from '@chakra-ui/react';
-import { login } from '../redux/actions/userActions';
+import { login } from '../../redux/actions/userActions';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { IoEye, IoEyeOff } from 'react-icons/io5'; // Import the icons
 import Cookies from 'js-cookie';
-import OAuthButtonGroup from '../components/authPages/OAuthButtonGroup';
+import OAuthButtonGroup from '../../components/authPages/OAuthButtonGroup';
 import { useEffect } from 'react';
 
 

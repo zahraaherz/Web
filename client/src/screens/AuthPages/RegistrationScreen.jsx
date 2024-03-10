@@ -18,7 +18,7 @@ import {
   import * as Yup from 'yup';
   import { useDispatch, useSelector } from 'react-redux';
   import { Link as ReactLink, useNavigate } from 'react-router-dom';
-  import { register } from '../redux/actions/userActions';
+  import { register } from '../../redux/actions/userActions';
   import { useEffect } from 'react';
 
   const RegistrationScreen = () => {

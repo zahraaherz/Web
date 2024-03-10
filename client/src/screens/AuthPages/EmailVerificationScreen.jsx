@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { verifyEmail } from '../redux/actions/userActions';
+import { verifyEmail } from '../../redux/actions/userActions';
 
 const VerifyUserPage = () => {
   const { token } = useParams();
