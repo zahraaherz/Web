@@ -120,99 +120,92 @@ const QuantitySelect = ({ value, maxStock, onChange, ...props }) => {
 //   //   </Flex>
 //   // );
 // };
+// ... (previous imports)
+// ... (previous imports)
+
 export const CartItem = ({ cartItem }) => {
   const dispatch = useDispatch();
   const { product: cartProduct, loading } = cartItem;
-  const { product: fetchedProduct } = useSelector((state) => state.product);
 
-    const {
-    product: {_id, name, price , description , images },
+  const {
+    product: { _id, name, price, description, images },
     quantity,
     currency,
     onChangeQuantity,
     onClickDelete,
-  } = cartItem
+  } = cartItem;
 
   useEffect(() => {
+      dispatch(getProduct(cartProduct._id));
+  }, [cartProduct._id, dispatch]);
+  console.log(cartItem)
+  // Wait until both cartProduct and fetchedProduct are available
+  if (loading || !cartProduct ) {
+    return <div>Loading...</div>; // You can customize this loading state
+  }
 
-  // Check if the product is not yet fetched or if the ID has changed
-  if (cartProduct._id && (fetchedProduct === null || cartProduct._id !== fetchedProduct._id)) {
-    console.log('_id', cartProduct._id )
-
-    dispatch(getProduct(cartProduct._id));
-  } 
- }, [cartProduct._id, fetchedProduct, dispatch]);
-
-  console.log('cartProduct', cartProduct )
-  console.log('fetchedProduct', fetchedProduct )
- 
+  // Render the component with the correct product details
   return (
-    <>
-      {(!loading && (cartProduct || fetchedProduct)) && (
-        <Flex
-          direction={{
-            base: 'column',
-            md: 'row',
+    <Flex
+      key={cartProduct._id} // Assuming _id is a unique identifier for each cart item
+      direction={{
+        base: 'column',
+        md: 'row',
+      }}
+      justify="space-between"
+      align="center"
+    >
+      <CartProductMeta
+        name={cartProduct.name}
+        description={cartProduct.description}
+        image={cartProduct.images}
+        isGiftWrapping={cartProduct.isGiftWrapping}
+      />
+
+      {/* Rest of your component */}
+      <Flex
+        width="full"
+        justify="space-between"
+        display={{
+          base: 'none',
+          md: 'flex',
+        }}
+      >
+        <QuantitySelect
+          defaultValue={quantity}
+          maxStock={cartProduct.stock}
+          onChange={(e) => {
+            onChangeQuantity?.(+e.currentTarget.value);
           }}
-          justify="space-between"
-          align="center"
-        >
-          {/* Pass the relevant product details as props to CartProductMeta */}
-          <CartProductMeta
-            name={cartProduct ? cartProduct.name : fetchedProduct.name}
-            description={cartProduct ? cartProduct.description : fetchedProduct.description}
-            image={cartProduct ? cartProduct.images : fetchedProduct.images}
-            isGiftWrapping={cartProduct ? cartProduct.isGiftWrapping : fetchedProduct.isGiftWrapping}
-          />
+        />
+        <PriceTag price={cartProduct.price} currency={cartProduct.currency} />
+        <CloseButton aria-label={`Delete ${cartProduct.name} from cart`} onClick={onClickDelete} />
+      </Flex>
 
-          {/* Desktop */}
-          <Flex
-            width="full"
-            justify="space-between"
-            display={{
-              base: 'none',
-              md: 'flex',
-            }}
-          >
-            <QuantitySelect
-              defaultValue={cartItem.quantity}
-              maxStock={cartProduct ? cartProduct.stock : fetchedProduct.stock}
-              onChange={(e) => {
-                // Assuming you have an onChangeQuantity function in your component
-                onChangeQuantity?.(+e.currentTarget.value);
-              }}
-            />
-            <PriceTag price={cartProduct ? cartProduct.price : fetchedProduct.price} currency={cartProduct ? cartProduct.currency : fetchedProduct.currency} />
-            <CloseButton aria-label={`Delete ${cartProduct ? cartProduct.name : fetchedProduct.name} from cart`} onClick={onClickDelete} />
-          </Flex>
-
-          {/* Mobile */}
-          <Flex
-            mt="4"
-            align="center"
-            width="full"
-            justify="space-between"
-            display={{
-              base: 'flex',
-              md: 'none',
-            }}
-          >
-            <Link fontSize="sm" textDecor="underline" onClick={onClickDelete}>
-              Delete
-            </Link>
-            <QuantitySelect
-              defaultValue={cartItem.quantity}
-              maxStock={cartProduct ? cartProduct.stock : fetchedProduct.stock}
-              onChange={(e) => {
-                // Assuming you have an onChangeQuantity function in your component
-                onChangeQuantity?.(+e.currentTarget.value);
-              }}
-            />
-            <PriceTag price={cartProduct ? cartProduct.price : fetchedProduct.price} currency={cartProduct ? cartProduct.currency : fetchedProduct.currency} />
-          </Flex>
-        </Flex>
-      )}
-    </>
+      {/* Mobile */}
+      <Flex
+        mt="4"
+        align="center"
+        width="full"
+        justify="space-between"
+        display={{
+          base: 'flex',
+          md: 'none',
+        }}
+      >
+        <Link fontSize="sm" textDecor="underline" onClick={onClickDelete}>
+          Delete
+        </Link>
+        <QuantitySelect
+          defaultValue={quantity}
+          maxStock={cartProduct.stock}
+          onChange={(e) => {
+            onChangeQuantity?.(+e.currentTarget.value);
+          }}
+        />
+        <PriceTag price={cartProduct.price} currency={cartProduct.currency} />
+      </Flex>
+    </Flex>
   );
 };
 

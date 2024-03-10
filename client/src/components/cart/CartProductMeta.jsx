@@ -15,7 +15,7 @@ import {
     const { isGiftWrapping = true, image, name, description } = props
     const [isShown, setIsShown] = useState(false);
     // console.log('Image Prop:', props.image);
-    console.log('CartProductMeta Props:', props);
+    // console.log('CartProductMeta Props:', props);
 
     return (
       <Stack direction="row" spacing="5" width="full">

@@ -25,14 +25,14 @@ import { addToCart } from '../redux/actions/cartAction';
 
 const ProductScreen = () => {
 	const [amount, setAmount] = useState(1);
-	const { id: productId  } = useParams();
+	const { id  } = useParams();
 	const dispatch = useDispatch();
 	const { loading, error, product } = useSelector((state) => state.product);
 	const { userInfo } = useSelector((state) => state.user); 
 
 	useEffect(() => {
-		dispatch(getProduct(productId));
-	}, [dispatch, productId]);
+		dispatch(getProduct(id));
+	}, [dispatch, id]);
 
 	const changeAmount = (input) => {
 		if (input === 'plus') {
@@ -43,15 +43,12 @@ const ProductScreen = () => {
 		}
 	};
 
-	console.log('userInfo:', userInfo._id);
-	console.log('product:', productId);
-	console.log('amount:', amount);
 
 	const handleAddToCart = () => {
-		console.log('Adding to cart:', userInfo._id, productId, amount);
+		console.log('Adding to cart:', userInfo._id, id, amount);
 
 		try {
-			dispatch(addToCart(userInfo.id, productId, amount));
+			dispatch(addToCart(userInfo.id, id, amount));
 		  } catch (error) {
 			console.error('Error adding to cart:', error);
 		  }
